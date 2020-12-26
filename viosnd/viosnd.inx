@@ -1,0 +1,92 @@
+;/*++
+;
+;INX_COPYRIGHT_1
+;INX_COPYRIGHT_2
+;
+;Module Name:
+;    viosnd.inf
+;
+;Abstract:
+;
+;Installation Notes:
+;    Using Devcon: Type "devcon install viosnd.inf PCI\VEN_1AF4&DEV_1059&SUBSYS_1100_INX_SUBSYS_VENDOR_ID&REV_01"
+;
+;--*/
+
+[Version]
+Signature="$Windows NT$"
+Class=Media
+ClassGUID={4D36E96C-E325-11CE-BFC1-08002BE10318}
+Provider=%VENDOR%
+DriverVer=01/01/2008,0.0.0.1 ; this line will be replaced with stampinf
+CatalogFile=viosnd.cat
+DriverPackageDisplayName = %VirtIOSnd.DeviceDesc%
+PnPLockdown=1
+
+;
+; Source file information
+;
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+viosnd.sys = 1,,
+
+;
+; Driver information
+;
+
+[Manufacturer]
+%VENDOR%   = VirtIOSnd,NT$ARCH$
+
+[VirtIOSnd.NT$ARCH$]
+%VirtIOSnd.DeviceDesc% = viosnd, PCI\VEN_1AF4&DEV_1059&SUBSYS_1100_INX_SUBSYS_VENDOR_ID&REV_01, PCI\VEN_1AF4&DEV_1059
+
+;
+; General installation section
+;
+
+[viosnd]
+Include = ks.inf, wdmaudio.inf
+Needs = KS.Registration, WDMAUDIO.Registration
+CopyFiles = viosnd.CopyFiles
+
+[viosnd.CopyFiles]
+viosnd.sys,,,2
+
+;
+; Service Installation
+;
+
+[viosnd.Services]
+AddService = viosnd, 0x00000002 , viosnd_Service_Inst
+
+[viosnd_Service_Inst]
+DisplayName    = %VirtIOSnd.ServiceDesc%
+ServiceType    = %SERVICE_KERNEL_DRIVER%
+StartType      = %SERVICE_DEMAND_START%
+ErrorControl   = %SERVICE_ERROR_NORMAL%
+ServiceBinary  = %12%\viosnd.sys
+
+[Strings]
+;
+; Localizable Strings
+;
+VENDOR                  = "INX_COMPANY"
+DiskName                = "INX_PREFIX_VENDORVirtIO Sound Installation Disk"
+VirtIOSnd.DeviceDesc    = "INX_PREFIX_VENDORVirtIO Sound Device"
+VirtIOSnd.ServiceDesc   = "INX_PREFIX_VENDORVirtIO Sound Service"
+
+;
+; Non-Localizable Strings
+;
+
+REG_EXPAND_SZ  = 0x00020000
+REG_DWORD      = 0x00010001
+SERVICE_KERNEL_DRIVER  = 1
+SERVICE_DEMAND_START   = 3
+SERVICE_ERROR_NORMAL   = 1
